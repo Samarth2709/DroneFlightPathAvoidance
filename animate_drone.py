@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.animation import FuncAnimation
 
+# Import global configuration parameters
+from config import *
+
 def load_map_data(pkl_file='3d_map.pkl'):
     """
     Load map data (map_size, origin, destination, cylinders) from a pickle file.
@@ -25,16 +28,16 @@ def plot_cylinders(ax, cylinders):
         theta_grid, z_grid = np.meshgrid(theta, z)
         x_grid = cr * np.cos(theta_grid) + cx
         y_grid = cr * np.sin(theta_grid) + cy
-        ax.plot_surface(x_grid, y_grid, z_grid, color='grey', alpha=0.3)
+        ax.plot_surface(x_grid, y_grid, z_grid, color=CYLINDER_COLOR, alpha=CYLINDER_ALPHA)
 
         # Bottom circle
         circle_x = cr * np.cos(theta) + cx
         circle_y = cr * np.sin(theta) + cy
-        ax.plot(circle_x, circle_y, [0]*len(theta), color='grey', alpha=0.4)
+        ax.plot(circle_x, circle_y, [0]*len(theta), color=CYLINDER_COLOR, alpha=CYLINDER_LINE_ALPHA)
         # Top circle
-        ax.plot(circle_x, circle_y, [ch]*len(theta), color='grey', alpha=0.4)
+        ax.plot(circle_x, circle_y, [ch]*len(theta), color=CYLINDER_COLOR, alpha=CYLINDER_LINE_ALPHA)
 
-def create_drone_animation(map_data, waypoints, duration=5.0):
+def create_drone_animation(map_data, waypoints, duration=ANIMATION_DURATION):
     """
     Create a smooth 3D animation of a drone moving along a given list of waypoints.
     The animation shows a dashed line for the planned path and a blue line smoothly
@@ -55,8 +58,8 @@ def create_drone_animation(map_data, waypoints, duration=5.0):
     # Convert waypoints to a NumPy array if needed
     waypoints = np.array(waypoints)
     
-    # Create interpolated points for smooth animation (20 FPS)
-    n_frames = int(20 * duration)
+    # Create interpolated points for smooth animation
+    n_frames = int(FPS * duration)
     
     # Generate smooth path with distance-based interpolation
     cumulative_distances = [0]
@@ -95,21 +98,21 @@ def create_drone_animation(map_data, waypoints, duration=5.0):
     X, Y = np.meshgrid(np.linspace(0, map_size, 50),
                       np.linspace(0, map_size, 50))
     Z = np.zeros_like(X)
-    ax.plot_surface(X, Y, Z, color='lightgray', alpha=0.3)
+    ax.plot_surface(X, Y, Z, color=GROUND_COLOR, alpha=0.3)
 
     # Plot cylinders
     plot_cylinders(ax, cylinders)
 
     # Plot origin (red) and destination (green)
-    ax.scatter(origin[0], origin[1], origin[2], color='red', s=100, marker='o', label='Origin')
-    ax.scatter(destination[0], destination[1], destination[2], color='green', s=100, marker='o', label='Destination')
+    ax.scatter(origin[0], origin[1], origin[2], color=ORIGIN_COLOR, s=100, marker='o', label='Origin')
+    ax.scatter(destination[0], destination[1], destination[2], color=DESTINATION_COLOR, s=100, marker='o', label='Destination')
     
     # Plot the planned path as a dashed line (more visible)
     ax.plot(waypoints[:, 0], waypoints[:, 1], waypoints[:, 2], 
-            'k--', linewidth=1.5, alpha=0.7, label='Planned Path')
+            '--', color=PLANNED_PATH_COLOR, linewidth=1.5, alpha=0.7, label='Planned Path')
     
     # Create a solid blue line that will follow the path
-    path_line, = ax.plot([], [], [], 'b-', linewidth=2.5, alpha=0.8, label='Actual Path')
+    path_line, = ax.plot([], [], [], '-', color=ACTUAL_PATH_COLOR, linewidth=2.5, alpha=0.8, label='Actual Path')
     
     # Add labels and legend
     ax.set_xlabel("X")

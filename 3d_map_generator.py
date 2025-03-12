@@ -7,17 +7,24 @@ import pickle
 import random
 import math
 
+# Import global configuration parameters
+from config import *
+
 class MapGenerator:
-    def __init__(self, map_size=100, num_cylinders=30, min_height=5, max_height=20, 
-                 min_distance_from_points=10, min_dest_distance=40, max_dest_distance=120):
+    def __init__(self, map_size=MAP_SIZE, num_cylinders=NUM_CYLINDERS, 
+                 min_height=MIN_CYLINDER_HEIGHT, max_height=MAX_CYLINDER_HEIGHT, 
+                 min_distance_from_points=MIN_DISTANCE_FROM_POINTS, 
+                 min_dest_distance=MIN_DESTINATION_DISTANCE, 
+                 max_dest_distance=MAX_DESTINATION_DISTANCE):
         """
         Initialize the 3D map generator with parameters.
+        Uses defaults from config.py if not specified.
         
         Args:
             map_size: Size of the square map (x and y dimensions)
             num_cylinders: Number of cylinders to generate
-            min_height: Minimum height of cylinders (default: 5)
-            max_height: Maximum height of cylinders (default: 20)
+            min_height: Minimum height of cylinders
+            max_height: Maximum height of cylinders
             min_distance_from_points: Minimum distance cylinders must be from origin/destination
             min_dest_distance: Minimum distance between origin and destination
             max_dest_distance: Maximum distance between origin and destination
@@ -66,7 +73,7 @@ class MapGenerator:
             # Generate random position and properties
             x = random.uniform(0, self.map_size)
             y = random.uniform(0, self.map_size)
-            radius = random.uniform(2, 5)
+            radius = random.uniform(MIN_CYLINDER_RADIUS, MAX_CYLINDER_RADIUS)
             height = random.uniform(self.min_height, self.max_height)
             
             # Check if cylinder is too close to origin or destination
@@ -120,7 +127,7 @@ class MapGenerator:
         Z = np.zeros_like(X)
         
         # Plot the ground as a surface
-        ax.plot_surface(X, Y, Z, color='lightgray', alpha=0.3, zorder=1)
+        ax.plot_surface(X, Y, Z, color=GROUND_COLOR, alpha=0.3, zorder=1)
         
         # Plot cylinders
         for x, y, radius, height in self.cylinders:
@@ -131,14 +138,14 @@ class MapGenerator:
             
             # Create cylinder
             # Bottom circle
-            ax.plot(circle_x, circle_y, np.zeros_like(theta), color='grey', alpha=0.4)
+            ax.plot(circle_x, circle_y, np.zeros_like(theta), color=CYLINDER_COLOR, alpha=CYLINDER_LINE_ALPHA)
             # Top circle
-            ax.plot(circle_x, circle_y, np.ones_like(theta) * height, color='grey', alpha=0.4)
+            ax.plot(circle_x, circle_y, np.ones_like(theta) * height, color=CYLINDER_COLOR, alpha=CYLINDER_LINE_ALPHA)
             
             # Connect bottom and top circles with lines
             for i in range(0, len(theta), 4):
                 ax.plot([circle_x[i], circle_x[i]], [circle_y[i], circle_y[i]], 
-                        [0, height], color='grey', alpha=0.4)
+                        [0, height], color=CYLINDER_COLOR, alpha=CYLINDER_LINE_ALPHA)
             
             # Create cylinder surface
             z = np.linspace(0, height, 10)
@@ -146,11 +153,11 @@ class MapGenerator:
             x_grid = radius * np.cos(theta_grid) + x
             y_grid = radius * np.sin(theta_grid) + y
             
-            ax.plot_surface(x_grid, y_grid, z_grid, color='grey', alpha=0.3)
+            ax.plot_surface(x_grid, y_grid, z_grid, color=CYLINDER_COLOR, alpha=CYLINDER_ALPHA)
         
         # Plot origin point (red) and destination point (green)
-        ax.scatter(self.origin[0], self.origin[1], self.origin[2], color='red', s=100, marker='o', label='Origin')
-        ax.scatter(self.destination[0], self.destination[1], self.destination[2], color='green', s=100, marker='o', label='Destination')
+        ax.scatter(self.origin[0], self.origin[1], self.origin[2], color=ORIGIN_COLOR, s=100, marker='o', label='Origin')
+        ax.scatter(self.destination[0], self.destination[1], self.destination[2], color=DESTINATION_COLOR, s=100, marker='o', label='Destination')
         
         # Add a direct line from origin to destination
         ax.plot([self.origin[0], self.destination[0]], 
@@ -176,17 +183,10 @@ class MapGenerator:
         plt.close()
         return fig
 
-def generate_and_save_map(map_size=100, num_cylinders=30, show_visualization=True):
-    """Generate, save, and optionally visualize a 3D map"""
-    map_gen = MapGenerator(
-        map_size=map_size,
-        num_cylinders=num_cylinders,
-        min_height=5,
-        max_height=20,  # Reduced maximum height from 50 to 20
-        min_distance_from_points=10,
-        min_dest_distance=40,
-        max_dest_distance=90  # Increased max distance since origin is at corner now
-    )
+def generate_and_save_map(map_size=MAP_SIZE, num_cylinders=NUM_CYLINDERS, show_visualization=True):
+    """Generate, save, and optionally visualize a 3D map using global configuration"""
+    # Create map generator using global constants from config.py
+    map_gen = MapGenerator()
     
     map_gen.generate_map()
     map_file = map_gen.save_map()

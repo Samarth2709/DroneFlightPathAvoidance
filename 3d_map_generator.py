@@ -131,14 +131,14 @@ class MapGenerator:
             
             # Create cylinder
             # Bottom circle
-            ax.plot(circle_x, circle_y, np.zeros_like(theta), 'b-', alpha=0.6)
+            ax.plot(circle_x, circle_y, np.zeros_like(theta), color='grey', alpha=0.4)
             # Top circle
-            ax.plot(circle_x, circle_y, np.ones_like(theta) * height, 'b-', alpha=0.6)
+            ax.plot(circle_x, circle_y, np.ones_like(theta) * height, color='grey', alpha=0.4)
             
             # Connect bottom and top circles with lines
             for i in range(0, len(theta), 4):
                 ax.plot([circle_x[i], circle_x[i]], [circle_y[i], circle_y[i]], 
-                        [0, height], 'b-', alpha=0.6)
+                        [0, height], color='grey', alpha=0.4)
             
             # Create cylinder surface
             z = np.linspace(0, height, 10)
@@ -146,7 +146,7 @@ class MapGenerator:
             x_grid = radius * np.cos(theta_grid) + x
             y_grid = radius * np.sin(theta_grid) + y
             
-            ax.plot_surface(x_grid, y_grid, z_grid, color='skyblue', alpha=0.5)
+            ax.plot_surface(x_grid, y_grid, z_grid, color='grey', alpha=0.3)
         
         # Plot origin point (red) and destination point (green)
         ax.scatter(self.origin[0], self.origin[1], self.origin[2], color='red', s=100, marker='o', label='Origin')

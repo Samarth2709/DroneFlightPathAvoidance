@@ -8,7 +8,7 @@ import random
 import math
 
 class MapGenerator:
-    def __init__(self, map_size=100, num_cylinders=30, min_height=10, max_height=50, 
+    def __init__(self, map_size=100, num_cylinders=30, min_height=5, max_height=20, 
                  min_distance_from_points=10, min_dest_distance=40, max_dest_distance=120):
         """
         Initialize the 3D map generator with parameters.
@@ -16,8 +16,8 @@ class MapGenerator:
         Args:
             map_size: Size of the square map (x and y dimensions)
             num_cylinders: Number of cylinders to generate
-            min_height: Minimum height of cylinders
-            max_height: Maximum height of cylinders
+            min_height: Minimum height of cylinders (default: 5)
+            max_height: Maximum height of cylinders (default: 20)
             min_distance_from_points: Minimum distance cylinders must be from origin/destination
             min_dest_distance: Minimum distance between origin and destination
             max_dest_distance: Maximum distance between origin and destination
@@ -181,8 +181,8 @@ def generate_and_save_map(map_size=100, num_cylinders=30, show_visualization=Tru
     map_gen = MapGenerator(
         map_size=map_size,
         num_cylinders=num_cylinders,
-        min_height=10,
-        max_height=50,
+        min_height=5,
+        max_height=20,  # Reduced maximum height from 50 to 20
         min_distance_from_points=10,
         min_dest_distance=40,
         max_dest_distance=90  # Increased max distance since origin is at corner now
